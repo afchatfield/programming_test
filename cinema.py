@@ -40,6 +40,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+import getopt, sys
 
 #define paths for chrome.exe and chromedriver.exe
 chrome_path = "C:\Program Files\Google\Chrome\Application\Chrome.exe"
@@ -90,22 +91,44 @@ def transform(website):
   moviesdf = pd.DataFrame(movies).set_index('Rank')
   return moviesdf
   
-if __name__ == "__main__":
+def main(argv):
+  try:
+    options, _ = getopt.getopt(argv,"f:", longopts=["format="])
+  except getopt.GetoptError:
+    print('Error with options')
+    sys.exit(2)
+  format = ""
+  for opt, arg in options:
+    if opt == "--format":
+      format = arg
+      break
+    elif opt == "-f":
+      format = arg
+      break
+    else:
+      print("Wrong Option")
+      sys.exit(2)
   website = "https://www.listchallenges.com/100-must-see-movies-for-more-advanced-cinephiles"
   df = transform(website)
-  #convert to csv file
-  df.to_csv('data/cinema.csv')
-  # # #convert to html file
-  html = df.to_html()
-  html = html[:93] + "Rank" + html[93:] # add rank to first heading
-  html = html[:174] + html[261:] # remove second heading onverted from dataframe
-  with open("data/cinema.html", "w") as f:
-    f.write("""<html>
-    <head>
-      <link rel="stylesheet" href="cinema.css">
-    </head>
-    <body>\n""" +
-        html +
-    """\n</body>
-    </html>""")
+  if format.lower() == 'csv':
+    # convert to csv file
+    df.to_csv('data/cinema.csv')
+  elif format.lower() == 'html':
+    # convert to html file
+    html = df.to_html()
+    html = html[:93] + "Rank" + html[93:] # add rank to first heading
+    html = html[:174] + html[261:] # remove second heading onverted from dataframe
+    # add html to file
+    with open("data/cinema.html", "w") as f:
+      f.write("""<html>
+      <head>
+        <link rel="stylesheet" href="cinema.css">
+      </head>
+      <body>\n""" +
+          html +
+      """\n</body>
+      </html>""")
+
+if __name__ == "__main__":
+  main(sys.argv[1:])
 
