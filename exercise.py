@@ -72,7 +72,6 @@ def sortino_ratio(prices):
     negative_excess_return = [i for i in daily_return-stdev(daily_return) if i < 0] 
     sq_excess = [i**2 for i in negative_excess_return]
     downside_dev = np.sqrt(sum(sq_excess) / len(daily_return))
-    print(downside_dev)
     return r / downside_dev
 
 def expected_shortfall(prices, level=0.95):
@@ -101,10 +100,15 @@ def visualize(prices, path):
     saves the plot to the given path
     """
     plt.figure()
-    df.plot()
+    prices.plot()
     plt.savefig(path)
 
-df = pd.read_csv('data/data.csv').set_index('date')
-df.index = pd.to_datetime(df.index)
-print(sortino_ratio(df))
-# visualize(df, "data/plot.jpg")
+
+if __name__=="__main__":
+    df = pd.read_csv('data/data.csv').set_index('date')
+    df.index = pd.to_datetime(df.index)
+    print("MACD")
+    print(macd(df).tail())
+    print("Sortino ratio is not correct, couldn't work out which combination \nof rate or return and downside risk was the right answer")
+    print(sortino_ratio(df))
+    visualize(df, "data/plot.jpg")
