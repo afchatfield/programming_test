@@ -27,6 +27,14 @@ Usage:
 
 python cinema.py --format [ CSV | HTML ]
 
+Dependencies:
+This script uses selenium to web scrape using a chromedriver, link to installation guide is here:
+https://selenium-python.readthedocs.io/installation.html
+
+The script also uses beautiful soup and pandas but those are simpler and more common packages
+if these are not installed, a simple `pip install [package]` should work to install it to your machine
+otherwise refer to installation and usage guides for respective packages
+
 """
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -67,8 +75,8 @@ def getMoviesFromSite(wd, website):
     rank = int(a.find('td', "listVoteItem-rank").text.strip()[1:])
     #get num of up and down votes and add together
     no_of_votes = int(a.find('span', "listVote-upVoteCount").text.strip()) + int(a.find('span', "listVote-downVoteCount").text.strip())
-    movies.append({'title': movieYear[0], 'year': movieYear[1],
-    'rank': rank, 'votes': no_of_votes})
+    movies.append({'Title': movieYear[0], 'Year': movieYear[1],
+    'Rank': rank, 'Votes': no_of_votes})
   return movies
 
 def transform(website):
@@ -79,8 +87,7 @@ def transform(website):
   finally:
     #if error, quit the driver
     wd.quit()
-  moviesdf = pd.DataFrame(movies)
-  moviesdf.set_index('rank')
+  moviesdf = pd.DataFrame(movies).set_index('Rank')
   return moviesdf
   
 if __name__ == "__main__":
@@ -88,4 +95,17 @@ if __name__ == "__main__":
   df = transform(website)
   #convert to csv file
   df.to_csv('data/cinema.csv')
+  # # #convert to html file
+  html = df.to_html()
+  html = html[:93] + "Rank" + html[93:] # add rank to first heading
+  html = html[:174] + html[261:] # remove second heading onverted from dataframe
+  with open("data/cinema.html", "w") as f:
+    f.write("""<html>
+    <head>
+      <link rel="stylesheet" href="cinema.css">
+    </head>
+    <body>\n""" +
+        html +
+    """\n</body>
+    </html>""")
 
