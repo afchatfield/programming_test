@@ -1,7 +1,7 @@
 ## Anthony Chatfield
 Hi,
 
-This is my submition to the test. I managed to finish everything except for the sortino ratio, which gave me alot of difficulty as I couldn't work out which rate of return equation to use for the data and I also wasn't sure what to use for MAR in the downside risk/deviation calculation. I experimented with all the different combinations of r and MAR values but none of them produced the correct value stated so I moved on.
+This is my submission to the test. I managed to finish everything except for the sortino ratio, which gave me alot of difficulty as I couldn't work out which rate of return equation to use for the data and I also wasn't sure what to use for MAR in the downside risk/deviation calculation. I experimented with all the different combinations of r and MAR values but none of them produced the correct value stated so I moved on.
 
 Funnily the cinema task is something I have done before, the exact same thing using listchallengs, I expand on it slightly and search bing's data for more movie data as well as using imdb and justwatch for additional data. This project is also on my github if you would like a look.
 
