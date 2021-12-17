@@ -38,37 +38,23 @@ otherwise refer to installation and usage guides for respective packages
 """
 import pandas as pd
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
+import requests
 import getopt, sys
 
-#define paths for chrome.exe and chromedriver.exe
-chrome_path = "C:\Program Files\Google\Chrome\Application\Chrome.exe"
-chromedriver_path = "C:\Windows\chromedriver"
-service = Service(chromedriver_path)
-
-#define webdriver options
-chrome_options = webdriver.ChromeOptions()
-#specify chrome options
-chrome_options.binary_location = chrome_path
-chrome_options.add_argument('--headless')
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
-
-def getSoup(wd, website):
-		"""get html content of a website"""
-		wd.get(website)
-		return BeautifulSoup(wd.page_source, 'html.parser')
+def getSoup(website):
+	"""get html content of a website"""
+	r = requests.get(website)
+	return BeautifulSoup(r.text, 'html.parser')
 
 def movieAndYear(input):
-		"""Gets (Movie, Year) from ""movie (year)" string input"""
-		return (input[:-7], int(input[-6:][1:5]))
+	"""Gets (Movie, Year) from ""movie (year)" string input"""
+	return (input[:-7], int(input[-6:][1:5]))
 
-def getMoviesFromSite(wd, website):
+def getMoviesFromSite(website):
   """scrapes listchallenges stats website for movies in list"""
   movies = []
-  soup = getSoup(wd, website+"/vote")
-  for a in soup.findAll('div', "listVote-item small-tall"):
+  soup = getSoup(website+"/vote")
+  for a in soup.findAll('div', "listVote-item small-tall "):
     #get title, strip whitespace
     title = a.find('div', "item-name").text.strip()
     movieYear = movieAndYear(title) #separate title and year
@@ -81,13 +67,9 @@ def getMoviesFromSite(wd, website):
   return movies
 
 def transform(website):
-  #try to instantiate driver and get movies list of dictionaries
-  try:
-    wd = webdriver.Chrome(service=service, options=chrome_options) # , desired_capabilities=capabilities)
-    movies = getMoviesFromSite(wd, website)
-  finally:
-    #if error, quit the driver
-    wd.quit()
+  #get movies list of dictionaries
+  movies = getMoviesFromSite(website)
+  print(movies[:5])
   moviesdf = pd.DataFrame(movies).set_index('Rank')
   return moviesdf
   
