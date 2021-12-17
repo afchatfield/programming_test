@@ -23,10 +23,10 @@ def smallest_difference(array):
     computationally efficient the better
     """
     array = sorted(array) #sort array
-    #create arbitarily large number to compare
-    diff = 10**20
+    #get first diffrence of pairs
+    diff = abs(array[0]-array[1])
     #compare adjacent pairs in list
-    for i in range((len(array)-1)):
+    for i in range(1, (len(array)-1)):
         curr = abs(array[i+1] - array[i])
         if curr < diff:
             diff = curr
